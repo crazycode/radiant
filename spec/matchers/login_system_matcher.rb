@@ -10,7 +10,7 @@ module RSpec
           proc.call
           @response = @example.response
           @was_redirect = @response.redirect?
-          @was_redirect_to_login = @response.redirect_url_match?("/admin/login")
+          @was_redirect_to_login = @response.location =~ /admin\/login/
           @was_redirect && @was_redirect_to_login
         end
 
@@ -62,8 +62,8 @@ module RSpec
             @example.request.session['user_id'] = user.id
             @proc.call
             response = @example.response
-            @urls[user] = response.redirect_url if @url && !response.redirect_url_match?(@url)
-            @result[user] = response.redirect? && (@url.nil? || response.redirect_url_match?(@url))
+            @urls[user] = response.redirect_url if @url && !response.location =~ Regexp.new(@url)
+            @result[user] = response.redirect? && (@url.nil? || response.location =~ Regexp.new(@url) )
           end
       end
 
